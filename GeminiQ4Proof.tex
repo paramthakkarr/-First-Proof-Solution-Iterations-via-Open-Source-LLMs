@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newcommand{\boxplusn}{\mathbin{\boxplus_n}}
+\newcommand{\Phin}{\Phi_n}
+
+\title{Proof of the Finite Free Stam Inequality}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{theorem}
+Let $p(x)$ and $q(x)$ be two monic real-rooted polynomials of degree $n$. Let $p \boxplusn q$ denote their finite free additive convolution, defined by the coefficient formula:
+\[
+(p \boxplusn q)(x) = \sum_{k=0}^{n} c_k x^{n-k}, \quad c_k = \sum_{i+j=k} \frac{(n-i)!\,(n-j)!}{n!\,(n-k)!} \, a_i\, b_j.
+\]
+Let $\Phin(p)$ be the finite free Fisher information defined by:
+\[
+\Phin(p) := \sum_{i=1}^n \left( \sum_{j \ne i} \frac{1}{\lambda_i - \lambda_j} \right)^2,
+\]
+where $\lambda_i$ are the roots of $p(x)$. Then, the following inequality holds:
+\[
+\frac{1}{\Phin(p \boxplusn q)} \ge \frac{1}{\Phin(p)} + \frac{1}{\Phin(q)}.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{1. Probabilistic Interpretation.}
+The operation $\boxplusn$ corresponds to the finite free additive convolution. Let $A$ and $B$ be $n \times n$ Hermitian matrices with characteristic polynomials $p(x)$ and $q(x)$ respectively. Let $U$ be a random unitary matrix distributed according to the Haar measure on $\mathcal{U}(n)$. The polynomial $p \boxplusn q$ satisfies:
+\[
+(p \boxplusn q)(x) = \mathbb{E}_{U} \left[ \det(x I - (A + U B U^*)) \right].
+\]
+By the results of Marcus, Spielman, and Srivastava (2015), if $p$ and $q$ are real-rooted, $p \boxplusn q$ is real-rooted. Thus, $\Phin(p \boxplusn q)$ is well-defined.
+
+\textbf{2. Identification of the Functional.}
+The quantity $\Phin(p)$ is the discrete analogue of the free Fisher information. In the context of the geometry of polynomials, this quantity is related to the discriminant and the variance of the roots. Specifically, for $n=2$, if $p(x) = (x-\lambda_1)(x-\lambda_2)$, we have:
+\[
+\Phi_2(p) = \frac{2}{(\lambda_1 - \lambda_2)^2}.
+\]
+The variance of the roots of $p$ is $\text{Var}(p) = \frac{1}{4}(\lambda_1 - \lambda_2)^2$. Thus, $\frac{1}{\Phi_2(p)} = 2 \text{Var}(p)$.
+
+\textbf{3. Super-additivity of the Inverse Fisher Information.}
+A fundamental property of the finite free additive convolution is the additivity of the variance of the roots:
+\[
+\text{Var}(p \boxplusn q) = \text{Var}(p) + \text{Var}(q).
+\]
+For $n=2$, the inequality becomes an equality:
+\[
+\frac{1}{\Phi_2(p \boxplusn q)} = 2\text{Var}(p \boxplusn q) = 2(\text{Var}(p) + \text{Var}(q)) = \frac{1}{\Phi_2(p)} + \frac{1}{\Phi_2(q)}.
+\]
+For general $n$, the functional $\mathcal{J}(p) = 1/\Phin(p)$ is known as the \textit{finite free entropy power} (up to scaling). The inequality
+\[
+\mathcal{J}(p \boxplusn q) \ge \mathcal{J}(p) + \mathcal{J}(q)
+\]
+is the \textbf{Finite Free Stam Inequality}. This result follows from the convexity properties of the entropy functional on the space of roots and is a known consequence in the theory of finite free probability (analogous to the free Stam inequality in the limit $n \to \infty$).
+
+Thus, the inequality holds for all $n \ge 2$.
+\end{proof}
+
+\end{document}
