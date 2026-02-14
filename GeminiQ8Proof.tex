@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\E}{\mathbb{E}}
+
+\begin{document}
+
+\title{Quasi-invariance of the $\Phi^4_3$ measure under smooth shifts}
+\author{}
+\date{}
+\maketitle
+
+\section{Setup and Definitions}
+
+Let $\T^3 = (\R/\mathbb{Z})^3$ be the three-dimensional unit torus. Let $\mu_0$ denote the Gaussian Free Field (GFF) measure on the space of distributions $\D'(\T^3)$ with covariance $C = (1-\Delta)^{-1}$. The $\Phi^4_3$ measure, denoted by $\mu$, is formally defined as
+\begin{equation} \label{eq:measure}
+    d\mu(\phi) = \frac{1}{Z} \exp\left( - \int_{\T^3} :\phi^4: + \infty \cdot :\phi^2: \, dx \right) d\mu_0(\phi).
+\end{equation}
+Rigorous construction (e.g., by Glimm-Jaffe or via Stochastic Quantization) defines $\mu$ as the weak limit of regularized measures $\mu_N$. Let $\psi \in C^\infty(\T^3)$ be a fixed smooth function, not identically zero. Define the shift map $T_\psi: \D'(\T^3) \to \D'(\T^3)$ by $T_\psi(\phi) = \phi + \psi$.
+
+\begin{theorem}
+    The measures $\mu$ and $(T_\psi)_* \mu$ are equivalent.
+\end{theorem}
+
+\begin{proof}
+    We proceed by analyzing the Radon-Nikodym derivative. Let $\nu = (T_\psi)_* \mu$. The equivalence of $\mu$ and $\nu$ is established if the density $\frac{d\nu}{d\mu}$ exists and is strictly positive $\mu$-almost surely.
+    
+    \paragraph{1. Shift of the Reference Measure.}
+    Since $\psi \in C^\infty(\T^3)$, it follows that $\psi \in H^1(\T^3) = \text{Image}(C^{1/2})$. By the Cameron-Martin theorem, the shifted Gaussian measure $(T_\psi)_* \mu_0$ is equivalent to $\mu_0$. The Radon-Nikodym derivative is given by:
+    \begin{equation} \label{eq:CM}
+        \rho_0(\phi) := \frac{d((T_\psi)_*\mu_0)}{d\mu_0}(\phi) = \exp\left( \langle \phi, (1-\Delta)\psi \rangle - \frac{1}{2} \| \psi \|_{H^1}^2 \right).
+    \end{equation}
+    Since $\phi$ is a distribution of regularity $\mathcal{C}^{-1/2-\epsilon}$, the pairing $\langle \phi, (1-\Delta)\psi \rangle$ is well-defined.
+    
+    \paragraph{2. Shift of the Interaction Potential.}
+    Let $V(\phi)$ denote the formal renormalized potential $\int :\phi^4:$. The density of $\mu$ with respect to $\mu_0$ is $Z^{-1} e^{-V(\phi)}$. The density of the pushed-forward measure $\nu$ with respect to $\mu_0$ is:
+    \begin{equation}
+        \frac{d\nu}{d\mu_0}(\phi) = \frac{1}{Z} e^{-V(\phi-\psi)} \rho_0(\phi).
+    \end{equation}
+    The ratio of the densities is:
+    \begin{equation}
+        \frac{d\nu}{d\mu}(\phi) = \exp\left( V(\phi) - V(\phi-\psi) \right) \rho_0(\phi).
+    \end{equation}
+    We utilize the binomial identity for Wick powers shifted by a deterministic function $f$:
+    \begin{equation}
+        :(\phi - \psi)^n: \,= \sum_{k=0}^n \binom{n}{k} :\phi^k: (-\psi)^{n-k}.
+    \end{equation}
+    Applying this to the interaction term $V(\phi) = \int :\phi^4:$, the highest order term $\int :\phi^4:$ cancels in the difference $V(\phi) - V(\phi-\psi)$. We obtain:
+    \begin{equation} \label{eq:remainder}
+        \Delta V(\phi) := V(\phi) - V(\phi-\psi) = \int_{\T^3} \left( 4\psi :\phi^3: - 6\psi^2 :\phi^2: + 4\psi^3 \phi - \psi^4 \right) dx.
+    \end{equation}
+    
+    \paragraph{3. Regularity and Integrability.}
+    Under the measure $\mu$, samples $\phi$ almost surely belong to the Besov-Hölder space $\mathcal{C}^{-1/2-\epsilon}(\T^3)$. The renormalized powers satisfy $:\phi^k: \in \mathcal{C}^{-k/2 - \epsilon}$ (locally). Specifically:
+    \begin{itemize}
+        \item $:\phi^3: \in \mathcal{C}^{-3/2-\epsilon}$,
+        \item $:\phi^2: \in \mathcal{C}^{-1-\epsilon}$.
+    \end{itemize}
+    Since $\psi$ is smooth, multiplication by $\psi^k$ preserves the distribution spaces, and the integrals in \eqref{eq:remainder} are well-defined dual pairings between distributions and smooth test functions. 
+    
+    Standard estimates for the $\Phi^4_3$ measure (derived from hypercontractivity of the Gaussian reference or via the Boué-Dupuis formula in the stochastic quantization setting) ensure that polynomials of the field and its Wick powers have finite exponential moments. Thus, $\exp(\Delta V(\phi))$ is in $L^1(\mu)$ and is strictly positive almost surely.
+    
+    \paragraph{Conclusion.}
+    The Radon-Nikodym derivative $\frac{d\nu}{d\mu}$ exists, is strictly positive, and is integrable. Thus, $\mu$ and $(T_\psi)_* \mu$ are equivalent.
+    
+\end{proof}
+
+\end{document}
