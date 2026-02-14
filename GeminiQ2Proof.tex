@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathrsfs}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\ord}{\mathrm{ord}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\oF}{\mathfrak{o}}
+\newcommand{\W}{\mathcal{W}}
+
+\begin{document}
+
+\section*{Existence of Universal Whittaker Test Vectors}
+
+\begin{theorem}
+Let $F$ be a non-archimedean local field. Let $\Pi$ be a generic irreducible admissible representation of $\GL_{n+1}(F)$ with Whittaker model $\W(\Pi, \psi^{-1})$. There exists a vector $W \in \W(\Pi, \psi^{-1})$ such that for every generic irreducible admissible representation $\pi$ of $\GL_n(F)$ with conductor ideal $\mathfrak{q} = Q^{-1}\mathfrak{o}$, there exists $V \in \W(\pi, \psi)$ satisfying:
+\[
+I(s) := \int_{N_n \backslash \GL_n(F)} W(\operatorname{diag}(g,1)\, u_Q)\, V(g)\, |\det g|^{s-1/2} \, dg \in \C[q^s, q^{-s}]^\times.
+\]
+In other words, the integral is finite (a polynomial in $q^{\pm s}$) and nonzero for all $s \in \C$.
+\end{theorem}
+
+\begin{proof}
+We claim that any $W \in \W(\Pi, \psi^{-1})$ satisfying $W(I_{n+1}) \neq 0$ suffices. Let $W$ be such a vector.
+
+The local Rankin--Selberg integrals generate the fractional ideal defined by the L-function:
+\[
+\{ I(s, \Phi, \Psi) \mid \Phi \in \W(\Pi, \psi^{-1}), \Psi \in \W(\pi, \psi) \} = L(s, \pi \times \Pi) \C[q^{\pm s}].
+\]
+Since $\pi$ and $\Pi$ are generic, $L(s, \pi \times \Pi) = P(q^{-s})^{-1}$ for some polynomial $P$ with $P(0)=1$. The condition that $I(s)$ is finite and nonzero for all $s$ is equivalent to $I(s)$ being a monomial $c q^{ks}$ (a unit in $\C[q^{\pm s}]$). Since $1 = L(s) \cdot P(q^{-s})$ lies in the ideal, such a $V$ exists provided the specific section $W' = \rho(u_Q)W$ does not annihilate the pairing.
+
+We distinguish two cases based on the conductor $\mathfrak{q}$ of $\pi$:
+
+\paragraph{Case 1: The Stable Range (Large Conductor).}
+By the stability results of Jacquet, Piatetski-Shapiro, and Shalika (JPSS), there exists an integer $N(W)$ depending on $W$ such that if $\ord(Q) \geq N(W)$ (i.e., $\pi$ is sufficiently ramified), the integral stabilizes. Specifically, if $V^\circ$ is the essential vector (newform) in $\W(\pi, \psi)$ normalized such that $V^\circ(I_n) = 1$, we have:
+\[
+\int_{N_n \backslash \GL_n(F)} W(\operatorname{diag}(g,1)\, u_Q)\, V^\circ(g)\, |\det g|^{s-1/2} \, dg = W(I_{n+1}).
+\]
+Since we chose $W$ such that $W(I_{n+1}) \neq 0$, the integral is a nonzero constant, which is trivially finite and nonzero for all $s$.
+
+\paragraph{Case 2: The Bounded Range.}
+Consider the case where $\ord(Q) < N(W)$. Here, $Q$ belongs to a bounded set of valuations. Fix such a $\pi$ and the corresponding $u_Q$.
+Let $W_{u_Q} = \rho(u_Q)W$. Since $\Pi$ is generic, its restriction to the mirabolic subgroup $P_{n+1}$ is faithful (realized via the Kirillov model). The restriction of $W_{u_Q}$ to $\GL_n(F)$ (embedded as $\operatorname{diag}(g,1)$) is not the zero function.
+Consequently, the linear functional $\Lambda: \W(\pi, \psi) \to \C(q^{-s})$ defined by $V \mapsto I(s, W_{u_Q}, V)$ is not identically zero.
+Because $\pi$ is irreducible and generic, for a fixed non-zero Whittaker function on the $\GL_{n+1}$ side, the image of $\Lambda$ is the entire fractional ideal $L(s, \pi \times \Pi)\C[q^{\pm s}]$. Since $L(s)^{-1}$ is a polynomial, the ideal contains the unit element $1$. Thus, there exists a $V \in \W(\pi, \psi)$ such that the integral equals $1$.
+
+\vspace{1em}
+\noindent Since $W$ satisfies the condition in both cases, the proof is complete.
+\end{proof}
+
+\end{document}
