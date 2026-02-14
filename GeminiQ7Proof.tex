@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[utf8]{inputenc}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem*{theorem*}{Theorem}
+
+\begin{document}
+
+\title{Manifolds with $\mathbb{Q}$-Acyclic Universal Covers}
+\author{}
+\date{}
+\maketitle
+
+\section*{Problem Statement}
+Suppose that $\Gamma$ is a uniform lattice in a real semisimple group, and that $\Gamma$ contains some $2$-torsion. Is it possible for $\Gamma$ to be the fundamental group of a compact manifold without boundary whose universal cover is acyclic over the rational numbers $\mathbb{Q}$?
+
+\section*{Proof}
+
+\begin{theorem*}
+It is not generally possible. Specifically, if the rational Euler characteristic of the group $\chi(\Gamma)$ is not an integer, no such manifold $M$ exists.
+\end{theorem*}
+
+\begin{proof}
+Let $M$ be a compact manifold with fundamental group $\pi_1(M) \cong \Gamma$ and universal cover $\tilde{M}$. Suppose $\tilde{M}$ is acyclic over $\mathbb{Q}$.
+
+\paragraph{1. Rational Cohomology Isomorphism}
+Consider the Serre spectral sequence associated with the fibration $\tilde{M} \to M \to B\Gamma$. The $E_2$ page is given by:
+\[
+E_2^{p,q} = H^p(\Gamma; H^q(\tilde{M}; \mathbb{Q}))
+\]
+Since $\tilde{M}$ is $\mathbb{Q}$-acyclic, we have $H^0(\tilde{M}; \mathbb{Q}) \cong \mathbb{Q}$ and $H^q(\tilde{M}; \mathbb{Q}) = 0$ for $q > 0$. The spectral sequence collapses at $E_2$, yielding an isomorphism between the rational cohomology of the manifold and the group cohomology of the lattice:
+\[
+H^*(M; \mathbb{Q}) \cong H^*(\Gamma; \mathbb{Q})
+\]
+
+\paragraph{2. Equality of Euler Characteristics}
+The topological Euler characteristic of $M$ is the alternating sum of its Betti numbers:
+\[
+\chi(M) = \sum_{i} (-1)^i \dim_{\mathbb{Q}} H^i(M; \mathbb{Q})
+\]
+Using the isomorphism from Step 1, this implies:
+\[
+\chi(M) = \chi(\Gamma)
+\]
+where $\chi(\Gamma)$ is the Euler characteristic of the group $\Gamma$.
+
+\paragraph{3. Integrality Obstruction}
+Since $M$ is a compact manifold, its Euler characteristic must be an integer:
+\[
+\chi(M) \in \mathbb{Z}
+\]
+However, for a uniform lattice $\Gamma$ in a real semisimple group $G$, $\chi(\Gamma)$ is defined as the orbifold Euler characteristic (or V-manifold Euler characteristic) of the quotient space $\Gamma \backslash G / K$. This is given by the Harder-Gauss-Bonnet formula:
+\[
+\chi(\Gamma) = \text{Vol}(\Gamma \backslash G / K) \cdot C_G
+\]
+When $\Gamma$ contains torsion (such as $2$-torsion), the action of $\Gamma$ on the symmetric space $G/K$ is not free. Consequently, $\chi(\Gamma)$ is generally a non-integer rational number (i.e., $\chi(\Gamma) \in \mathbb{Q} \setminus \mathbb{Z}$).
+
+\paragraph{Conclusion}
+For any lattice $\Gamma$ where $\chi(\Gamma) \notin \mathbb{Z}$, the condition $\chi(M) = \chi(\Gamma)$ contradicts the topological requirement that $\chi(M) \in \mathbb{Z}$. Thus, it is impossible for such a $\Gamma$ to be the fundamental group of a compact manifold with a $\mathbb{Q}$-acyclic universal cover.
+\end{proof}
+
+\end{document}
