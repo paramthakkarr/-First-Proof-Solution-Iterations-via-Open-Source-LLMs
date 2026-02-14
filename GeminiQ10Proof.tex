@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{geometry}
+
+\geometry{margin=1in}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+% Macros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\vecop}{\operatorname{vec}}
+\newcommand{\matop}{\operatorname{mat}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}{\otimes}
+\newcommand{\khatri}{\odot}
+
+\title{Efficient Preconditioned Conjugate Gradient Solver for RKHS-Regularized Tensor Completion}
+\author{Gemini 3 Pro}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Formulation}
+
+We consider the mode-$k$ subproblem of a CP decomposition for an unaligned tensor $\T \in \R^{n_1 \times \dots \times n_d}$ with rank $r$. The mode-$k$ factor $A_k \in \R^{n \times r}$ is constrained to an RKHS with kernel $K \in \R^{n \times n}$, such that $A_k = KW$ for an unknown weight matrix $W \in \R^{n \times r}$.
+
+Let $\Omega$ be the set of observed indices with $|\Omega| = q$. Let $Z \in \R^{M \times r}$ be the Khatri-Rao product of the fixed factors. The optimization problem is equivalent to solving the linear system $\mathcal{A}\mathbf{x} = \mathbf{b}$, where $\mathbf{x} = \vecop(W)$ and the system matrix is:
+\begin{equation} \label{eq:system}
+    \mathcal{A} = (Z \kron K)^\top S S^\top (Z \kron K) + \lambda (I_r \kron K).
+\end{equation}
+Direct inversion of $\mathcal{A} \in \R^{nr \times nr}$ requires $\mathcal{O}(n^3 r^3)$. We propose a Preconditioned Conjugate Gradient (PCG) approach.
+
+\section{Efficient Matrix-Vector Multiplication}
+
+The bottleneck of PCG is the matrix-vector product $\mathcal{A}\mathbf{v}$. Explicit formation of $\mathcal{A}$ is prohibitive.
+
+\begin{lemma}[Implicit Matrix-Vector Product]
+    Let $\mathbf{v} = \vecop(V)$ for $V \in \R^{n \times r}$. The product $\mathcal{A}\mathbf{v}$ can be computed in $\mathcal{O}(qr + n^2r)$ time without explicitly forming $Z \kron K$ or $S$.
+\end{lemma}
+
+\begin{proof}
+    Decompose the product into the data fidelity term and the regularization term:
+    \[ \mathcal{A}\mathbf{v} = \underbrace{(Z^\top \kron K) S S^\top (Z \kron K) \vecop(V)}_{\text{term 1}} + \underbrace{\lambda (I_r \kron K) \vecop(V)}_{\text{term 2}}. \]
+    
+    \textbf{Term 1 Calculation:}
+    \begin{enumerate}
+        \item Compute $U = KV \in \R^{n \times r}$. Complexity: $\mathcal{O}(n^2 r)$.
+        \item Let $\mathcal{P}_{\Omega}(\cdot)$ denote the projection onto the observed set $\Omega$. The operation $S S^\top (Z \kron K) \vecop(V)$ corresponds to computing the entries of $U Z^\top$ only at indices in $\Omega$.
+        For each $(i, j) \in \Omega$:
+        \[ (Y_\Omega)_{ij} = \langle U_{i,:}, Z_{j,:} \rangle. \]
+        This requires $q$ dot products of length $r$. Complexity: $\mathcal{O}(qr)$.
+        \item The adjoint operation $(Z^\top \kron K) \vecop(Y_\Omega)$ corresponds to $K (Y_\Omega Z)$. 
+        First, compute $G_{temp} = Y_\Omega Z$. Since $Y_\Omega$ is sparse with $q$ non-zeros:
+        \[ (G_{temp})_{i,:} = \sum_{j : (i,j) \in \Omega} (Y_\Omega)_{ij} Z_{j,:}. \]
+        Complexity: $\mathcal{O}(qr)$.
+        \item Compute $G = K G_{temp}$. Complexity: $\mathcal{O}(n^2 r)$.
+    \end{enumerate}
+    
+    \textbf{Term 2 Calculation:}
+    Compute $\lambda K V$. Complexity: $\mathcal{O}(n^2 r)$.
+    
+    Total complexity is $\mathcal{O}(2n^2 r + 2qr)$, which simplifies to $\mathcal{O}(qr + n^2 r)$.
+\end{proof}
+
+\section{Mean-Field Preconditioner}
+
+The Hessian is ill-conditioned due to the kernel $K$ and sampling $S$. We approximate $S S^\top \approx \frac{q}{N} I_{N}$ (mean-field approximation).
+
+\begin{proposition}[Preconditioner Inversion]
+    Let the preconditioner be $M = \frac{q}{N} (Z^\top Z \kron K^2) + \lambda (I_r \kron K)$. The system $M \mathbf{z} = \mathbf{r}$ can be solved in $\mathcal{O}(n^2 r + nr^2)$ time.
+\end{proposition}
+
+\begin{proof}
+    Factor $M$ as:
+    \[ M = (I_r \kron K) \left[ \frac{q}{N} (Z^\top Z \kron K) + \lambda I_{nr} \right]. \]
+    To solve $M \mathbf{z} = \mathbf{r}$:
+    \begin{enumerate}
+        \item Let $\tilde{\mathbf{r}} = (I_r \kron K^{-1}) \mathbf{r}$. (Requires $K^{-1}$ or Cholesky solve).
+        \item We must solve $\left[ \frac{q}{N} (Z^\top Z \kron K) + \lambda I_{nr} \right] \mathbf{z} = \tilde{\mathbf{r}}$.
+        \item Compute the eigendecomposition $Z^\top Z = Q \Lambda Q^\top$, where $\Lambda = \operatorname{diag}(\sigma_1, \dots, \sigma_r)$. Complexity: $\mathcal{O}(r^3)$.
+        \item Transform the system by multiplying by $Q^\top \kron I_n$:
+        \[ \left[ \frac{q}{N} (\Lambda \kron K) + \lambda I_{nr} \right] (Q^\top \kron I_n) \mathbf{z} = (Q^\top \kron I_n) \tilde{\mathbf{r}}. \]
+        \item The system decouples into $r$ independent $n \times n$ systems. For $j=1,\dots,r$:
+        \[ (\frac{q}{N} \sigma_j K + \lambda I_n) \mathbf{y}_j = \tilde{\mathbf{r}}'_j. \]
+        Using the fixed eigendecomposition $K = V D V^\top$, this is a diagonal scaling in the eigenbasis of $K$.
+        \item Recover $\mathbf{z} = (Q \kron I_n) \mathbf{y}$.
+    \end{enumerate}
+    Assuming $K=VDV^\top$ is precomputed, the dominant costs are the basis rotations $(Q \kron I_n)$ and $(I_r \kron V^\top)$, taking $\mathcal{O}(nr^2)$ and $\mathcal{O}(n^2r)$ respectively.
+\end{proof}
+
+\section{Main Result}
+
+\begin{theorem}
+    The mode-$k$ update for RKHS-regularized CP tensor completion can be computed using Preconditioned Conjugate Gradient with the Mean-Field preconditioner with a per-iteration computational complexity of $\mathcal{O}(qr + n^2r)$.
+\end{theorem}
+
+\begin{algorithm}
+\caption{PCG Step for Mode-$k$}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Fixed factors $\{A_{i}\}_{i \ne k}$, data $\Omega$, kernel $K$, previous $W$.
+\State \textbf{Setup:} Compute $Z^\top Z$, eigen-decompose $Z^\top Z$ and $K$.
+\State \textbf{MVP:} $\mathbf{u} \leftarrow \mathcal{A}(\vecop(W))$ using Lemma 1.
+\State \textbf{Residual:} $\mathbf{r} \leftarrow \mathbf{b} - \mathbf{u}$.
+\State \textbf{Solve:} $\mathbf{z} \leftarrow M^{-1}\mathbf{r}$ using Proposition 1.
+\State \textbf{Loop:} Update direction and $\vecop(W)$ via standard PCG.
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}
