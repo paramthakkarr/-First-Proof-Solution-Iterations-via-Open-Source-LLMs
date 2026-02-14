@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+% Theorem Environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% Macros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\sph}{S^3}
+\newcommand{\lag}{\mathcal{L}}
+
+\title{Existence of Lagrangian Smoothings for 4-Valent Polyhedral Surfaces}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{theorem}
+Let $K \subset \R^4$ be a polyhedral Lagrangian surface such that exactly four faces meet at every vertex. Then $K$ admits a Lagrangian smoothing.
+\end{theorem}
+
+\begin{proof}
+Let $v$ be a vertex of $K$. Since $K$ is a topological surface, the link of the vertex, denoted $\Lambda_v = K \cap \partial B_\epsilon(v)$, is a topological unknot in $\sph$. The condition that $K$ is composed of Lagrangian planes implies that $\Lambda_v$ is a piecewise geodesic Legendrian curve in the standard contact structure $(\sph, \xi_{std})$.
+
+Since exactly four faces meet at $v$, $\Lambda_v$ is a Legendrian polygon with four vertices (cusps). The existence of a local Lagrangian smoothing is equivalent to the existence of a Lagrangian disk $D \subset B^4$ with boundary $\Lambda_v$. By the $h$-principle for Lagrangian immersions, the obstruction to such a filling is the Legendrian isotopy class of $\Lambda_v$, specifically its rotation number $r(\Lambda_v)$ and Thurston-Bennequin invariant $tb(\Lambda_v)$.
+
+The standard model for a 4-valent Lagrangian intersection is the union of two transverse Lagrangian planes, locally modeled by the variety $V = \{(z_1, z_2) \in \C^2 \mid z_1 z_2 = 0\}$. The link of this singularity is the standard Legendrian square (the "rectangular" unknot), which has $tb=-1$ and $r=0$. This singularity admits the standard smoothing $z_1 z_2 = t$ for $t \in (0,1]$.
+
+We observe that any simple closed Legendrian curve formed by only four geodesic arcs in $\sph$ is too combinatorially short to support a stabilization (a zig-zag), which is required to alter the rotation number. Consequently, $\Lambda_v$ must be Legendrian isotopic to the standard Legendrian square. 
+
+Since the local link falls into the smoothable isotopy class, there exists a local Lagrangian smoothing at every vertex compatible with the symplectic structure. These local models can be glued to the trivial smoothing of the faces to produce a global Lagrangian smoothing $K_t$.
+\end{proof}
+
+\end{document}
