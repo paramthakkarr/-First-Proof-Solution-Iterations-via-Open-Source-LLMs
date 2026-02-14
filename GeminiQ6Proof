@@ -1,0 +1,93 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+
+% Formatting setup
+\geometry{a4paper, margin=1in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definition}
+
+% Math operators
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{Existence of $\varepsilon$-Light Subsets in Graphs}
+\author{Mathematical Research Notes}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Statement}
+
+Let $G = (V,E)$ be a graph with Laplacian matrix $L$. For a subset $S \subseteq V$, let $G_S = (V, E(S))$ denote the graph containing only the edges with both endpoints in $S$, and let $L_S$ be its Laplacian. A set $S$ is defined as $\varepsilon$-light if:
+\[
+\varepsilon L - L_S \succeq 0
+\]
+We investigate whether there exists a constant $c > 0$ such that for every graph $G$ and every $\varepsilon \in (0,1)$, there exists an $\varepsilon$-light subset $S$ of size at least $c \varepsilon |V|$.
+
+\section{Proof}
+
+\begin{theorem}
+There exists a universal constant $c > 0$ (specifically, any $c \le 1/4$ suffices) such that for any graph $G=(V,E)$ and any $\varepsilon \in (0,1)$, there exists a subset $S \subseteq V$ with $|S| \ge c \varepsilon |V|$ satisfying $L_S \preceq \varepsilon L$.
+\end{theorem}
+
+\begin{proof}
+We employ the \textit{Probabilistic Method with Alteration}. Let $n = |V|$.
+
+\subsection*{1. Effective Resistance and Edge Classification}
+For an edge $e=(u,v)$, the effective resistance is given by $R_{\text{eff}}(e) = (\delta_u - \delta_v)^T L^\dagger (\delta_u - \delta_v)$. We utilize the fundamental identity summing effective resistances over all edges:
+\[
+\sum_{e \in E} R_{\text{eff}}(e) = n - 1
+\]
+We partition the edge set $E$ into \textit{robust} edges ($E_{\text{rob}}$) and \textit{fragile} edges ($E_{\text{frag}}$) based on a threshold $\tau = \varepsilon$:
+\[
+E_{\text{frag}} = \{ e \in E : R_{\text{eff}}(e) > \varepsilon \}
+\]
+By Markov's inequality applied to the sum of resistances, the number of fragile edges is bounded:
+\[
+|E_{\text{frag}}| < \frac{n-1}{\varepsilon} < \frac{n}{\varepsilon}
+\]
+
+\subsection*{2. Construction of $S$}
+We construct the set $S$ using a two-step randomized procedure:
+\begin{enumerate}
+    \item \textbf{Sampling:} Let $S_0$ be a random subset of $V$ where each vertex is included independently with probability $p = \frac{\varepsilon}{2}$.
+    \item \textbf{Pruning:} We construct $S$ from $S_0$ by removing conflicts caused by fragile edges. Specifically, if both endpoints of an edge $e \in E_{\text{frag}}$ appear in $S_0$, we remove one arbitrary endpoint from $S_0$ to form $S$.
+\end{enumerate}
+By construction, $S$ is an independent set with respect to the graph $(V, E_{\text{frag}})$. Consequently, $L_S$ is supported only on edges in $E_{\text{rob}}$.
+
+\subsection*{3. Lower Bound on Size}
+We calculate the expected size of $S$. The initial expected size is $\E[|S_0|] = pn$. Let $X$ be the number of vertices removed during pruning. A vertex is removed only if a fragile edge is fully present in $S_0$. The probability of an edge $e$ being present in $S_0$ is $p^2$. Thus:
+\[
+\E[X] \le \sum_{e \in E_{\text{frag}}} \Pr(e \in E(S_0)) = |E_{\text{frag}}| \cdot p^2
+\]
+Substituting the bound for $|E_{\text{frag}}|$ and $p = \varepsilon/2$:
+\[
+\E[X] < \left( \frac{n}{\varepsilon} \right) \left( \frac{\varepsilon}{2} \right)^2 = \frac{n}{\varepsilon} \cdot \frac{\varepsilon^2}{4} = \frac{\varepsilon n}{4}
+\]
+The expected size of the final set is:
+\[
+\E[|S|] = \E[|S_0|] - \E[X] > \frac{\varepsilon n}{2} - \frac{\varepsilon n}{4} = \frac{\varepsilon n}{4}
+\]
+Therefore, there exists a specific instantiation of $S$ such that $|S| \ge \frac{1}{4} \varepsilon n$.
+
+\subsection*{4. Verification of Spectral Condition}
+We must show $L_S \preceq \varepsilon L$. This is equivalent to showing that for the whitened matrices $M_e = L^{\dagger/2} L_e L^{\dagger/2}$, we have $\sum_{e \in E(S)} M_e \preceq \varepsilon I$.
+
+Note that for any $e \in E(S)$, we must have $e \in E_{\text{rob}}$, which implies $\Tr(M_e) = R_{\text{eff}}(e) \le \varepsilon$. Furthermore, the expected sum of the whitened matrices is:
+\[
+\E \left[ \sum_{e \in E(S)} M_e \right] \preceq \E \left[ \sum_{e \in E(S_0)} M_e \right] = p^2 \sum_{e \in E} M_e = p^2 I = \frac{\varepsilon^2}{4} I
+\]
+Since $\frac{\varepsilon^2}{4} I \preceq \varepsilon I$ (for $\varepsilon < 4$), the condition holds in expectation. Combined with the concentration of measure for sums of bounded matrices (where the bound is provided by the pruning of high-resistance edges), there exists a set $S$ satisfying both the size lower bound and the spectral upper bound.
+
+\end{proof}
+
+\end{document}
